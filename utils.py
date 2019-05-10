@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+from experiments import remove_horizontal_edges
 from fours_point import order_points
 
 
@@ -72,8 +73,16 @@ def customized_four_point_transform(image, pts, factor: float = 0.05):
         [0, maxHeight - 1]], dtype="float32")
 
     # compute the perspective transform matrix and then apply it
-    M = cv2.getPerspectiveTransform(rect, dst)
-    warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
+    new_rect = np.array([tl, tr, br, bl], dtype="float32")
+
+    M = cv2.getPerspectiveTransform(new_rect, dst)
+    # After offset maxWidth might over the boundary
+    warped = cv2.warpPerspective(
+        image,
+        M,
+        (maxWidth, maxHeight)
+    )
+    removed_black_edges = remove_horizontal_edges(warped)
 
     # return the warped image
-    return warped
+    return removed_black_edges

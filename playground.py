@@ -1,7 +1,7 @@
 import cv2
 
-from fours_point import read_points, four_point_transform
-from utils import get_center
+from fours_point import read_points
+from utils import get_center, customized_four_point_transform
 
 DEMO_DIR = 'demo/'
 
@@ -23,14 +23,15 @@ def tear_down_page(image_filename: str, coords_filename: str, dir: str):
 
     idx = 0
     for pt in pts:
-        wraped = four_point_transform(im, pt)
+        wraped = customized_four_point_transform(im, pt, 0.45)
         cv2.imwrite(f'{dir}/{image_filename}-{idx}.png', wraped)
         idx += 1
 
 
 def mark_center(image_filename: str, coords_filename: str):
     """
-
+    Example:
+    mark_center('p23-181.png', 'res/p23-181.txt')
     :return:
     """
     im = cv2.imread(DEMO_DIR + image_filename)
@@ -43,5 +44,4 @@ def mark_center(image_filename: str, coords_filename: str):
 
 
 if __name__ == '__main__':
-    # tear_down_page('p23-181.png', 'res/p23-181.txt', 'cropped_sentences')
-    mark_center('p23-181.png', 'res/p23-181.txt')
+    tear_down_page('p23-181.png', 'res/p23-181.txt', 'cropped_sentences')
